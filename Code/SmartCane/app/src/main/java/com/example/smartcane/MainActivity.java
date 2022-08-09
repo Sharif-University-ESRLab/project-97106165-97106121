@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Pair<String, String>> searchForDevices(){
         ArrayList<Pair<String, String>> res = new ArrayList<>();
         res.add(new Pair<>("Kasra's headset", "AA:BB:CC:DD:EE:FF"));
-        res.add(new Pair<>("My hand's free", "00:11:22:33:44:55"));
+        res.add(new Pair<>("My hands free", "00:11:22:33:44:55"));
         res.add(new Pair<>("Blind assistant", "FF:FF:FF:FF:FF:FF"));
         return res;
     }
