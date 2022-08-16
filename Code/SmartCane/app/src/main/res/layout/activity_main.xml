@@ -33,4 +33,14 @@
         android:onClick="handleClick"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="225dp" />
+
+    <Button
+        android:id="@+id/map_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="go to map point selection"
+        android:onClick="handleClick"
+        app:layout_constraintBottom_toTopOf="@+id/goto_sensors"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

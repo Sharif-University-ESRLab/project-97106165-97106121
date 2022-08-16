@@ -42,32 +42,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleClick(View target){
-        switch (target.getId()){
-            case R.id.search_button:
-                Toast.makeText(this, "About to search for devices", Toast.LENGTH_SHORT).show();
-                try {
-                    sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                ArrayList<Pair<String, String>> devicesList = this.searchForDevices();
-                adapter = new DevicesAdapter(devicesList);
-                devicesContainer.setAdapter(adapter);
-                gotoSensorsButton.setEnabled(true);
-                break;
-            case R.id.goto_sensors:
-                Toast.makeText(this, "About to switch to sensors activity", Toast.LENGTH_SHORT).show();
-                try {
-                    sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(this, SensorsInfoActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                break;
+        int id = target.getId();
+        if(id == R.id.search_button){
+            Toast.makeText(this, "About to search for devices", Toast.LENGTH_SHORT).show();
+            try {
+                sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ArrayList<Pair<String, String>> devicesList = this.searchForDevices();
+            adapter = new DevicesAdapter(devicesList);
+            devicesContainer.setAdapter(adapter);
+            gotoSensorsButton.setEnabled(true);
+
         }
+        else if(id == R.id.goto_sensors){
+            Toast.makeText(this, "About to switch to sensors activity", Toast.LENGTH_SHORT).show();
+            try {
+                sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Intent intent = new Intent(this, SensorsInfoActivity.class);
+            startActivity(intent);
+        }
+        else if (id == R.id.map_select){
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivity(intent);
+        }
+
     }
 
 

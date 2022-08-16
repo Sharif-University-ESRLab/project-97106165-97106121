@@ -2,9 +2,11 @@ package com.example.smartcane;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -34,11 +36,27 @@ public class SensorsInfoActivity extends AppCompatActivity {
     }
 
     private double getRandom() {
-        double res = Math.random() * 4;
-        return res;
+        return Math.random() * 4;
+    }
+    private void playBeep(float leftVolume, float rightVolume){
+        MediaPlayer mp = MediaPlayer.create(SensorsInfoActivity.this, R.raw.beep1);
+        mp.setVolume(leftVolume, rightVolume);
+        mp.start();
+    }
+    public void playAudio(View target){
+        int id = target.getId();
+        if(id == R.id.left_button){
+            playBeep(1, 0);
+        }
+        else if(id == R.id.middle_button){
+            playBeep(1, 1);
+        }
+        else if(id == R.id.right_button){
+            playBeep(0, 1);
+        }
     }
 
-    private Runnable sensorInfoUpdater = new Runnable() {
+    private final Runnable sensorInfoUpdater = new Runnable() {
         @Override
         public void run() {
             while (true) {
