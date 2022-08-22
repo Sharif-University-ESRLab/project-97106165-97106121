@@ -49,13 +49,15 @@ void loop() {
       Serial.println(" cm");
   }
 
+  
+   delay(2000);
   digitalWrite(TRIG_PIN2, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG_PIN2, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN2, LOW);
   
- delay(2000);
+
  const unsigned long duration2= pulseIn(ECHO_PIN2, HIGH);
  int distance2= duration2/29/2;
  if(duration2==0){
