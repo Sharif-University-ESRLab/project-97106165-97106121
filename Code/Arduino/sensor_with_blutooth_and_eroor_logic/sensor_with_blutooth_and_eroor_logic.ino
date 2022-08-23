@@ -10,11 +10,6 @@ const unsigned int TRIG_PIN2=11;
 const unsigned int ECHO_PIN2=10;
 const unsigned int TRIG_PIN3=9;
 const unsigned int ECHO_PIN3=8;
-const unsigned int TRIG_PIN4=7;
-const unsigned int ECHO_PIN4=6;
-const unsigned int VCC2=5;
-const unsigned int VCC3=4;
-const unsigned int VCC4=3;
 const unsigned int BAUD_RATE=9600;
 
 void setup() {
@@ -24,14 +19,6 @@ void setup() {
   pinMode(ECHO_PIN2, INPUT);
   pinMode(TRIG_PIN3, OUTPUT);
   pinMode(ECHO_PIN3, INPUT);
-  pinMode(TRIG_PIN4, OUTPUT);
-  pinMode(ECHO_PIN4, INPUT);
-  pinMode(VCC2, OUTPUT);
-  pinMode(VCC3, OUTPUT);
-  pinMode(VCC4, OUTPUT);
-  digitalWrite(VCC2, HIGH);
-  digitalWrite(VCC3, HIGH);
-  digitalWrite(VCC4, HIGH);
   Serial.begin(BAUD_RATE);
 
 
@@ -55,7 +42,8 @@ void loop() {
    } 
   else{
       if (distance1 < 50) {
-        MyBlue.println("L");
+        MyBlue.write('L');
+        MyBlue.write('\n');
         digitalWrite(LED_BUILTIN, HIGH);
       }
       Serial.print(duration1);
@@ -65,7 +53,7 @@ void loop() {
   }
 
   
-   delay(2000);
+   delay(200);
   digitalWrite(TRIG_PIN2, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG_PIN2, HIGH);
@@ -80,7 +68,8 @@ void loop() {
    } 
   else{
       if (distance2 < 50) {
-        MyBlue.println("R");
+        MyBlue.write('R');
+        MyBlue.write('\n');
         digitalWrite(LED_BUILTIN, HIGH);
       }
       Serial.print(duration2);
@@ -89,7 +78,7 @@ void loop() {
       Serial.println(" cm");
   }
 
-  delay(2000);
+  delay(200);
   digitalWrite(TRIG_PIN3, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG_PIN3, HIGH);
@@ -103,8 +92,9 @@ void loop() {
    Serial.println("Warning: no pulse from sensor3");
    } 
   else{
-      if (distance1 < 50) {
-        MyBlue.println("C");
+      if (distance3 < 50) {
+        MyBlue.write('C');
+        MyBlue.write('\n');
         digitalWrite(LED_BUILTIN, HIGH);
       }
       Serial.print(duration3);
@@ -113,28 +103,5 @@ void loop() {
       Serial.println(" cm");
   }
 
-  delay(2000);
-  digitalWrite(TRIG_PIN4, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN4, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN4, LOW);
-  
-
- const unsigned long duration4= pulseIn(ECHO_PIN4, HIGH);
- int distance4= duration4/29/2;
- if(duration4==0){
-   Serial.println("Warning: no pulse from sensor4");
-   } 
-  else{
-      if (distance1 < 58) {
-        MyBlue.println("C");
-        digitalWrite(LED_BUILTIN, HIGH);
-      }
-      Serial.print(duration4);
-      Serial.print("s-sensor4 distance to nearest object:");
-      Serial.print(distance4);
-      Serial.println(" cm");
-  }
- delay(1000);
+  delay(200);
  }
