@@ -42,10 +42,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean reached = false;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private boolean reactToChanges = false;
+    private boolean locationPickingEnabled = true;
+    private boolean started = false;
     public static BluetoothSocket mmSocket;
     public static ConnectedThread connectedThread;
     public static CreateConnectThread createConnectThread;
     public static Handler handler;
+
+    private static final double DISTANCE_TRIGGER = 5;
 
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
@@ -105,7 +110,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         };
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (createConnectThread != null){
+            createConnectThread.cancel();
+        }
+    }
 
     private void handleArduinoMessage(String msg){
         if(msg.equals("L")){
@@ -130,16 +141,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         this.map = googleMap;
         this.map.setMyLocationEnabled(true);
 //        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationManager.getLoca, 16.0f));
-        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(@NonNull LatLng latLng) {
-                resetParams();
-                findViewById(R.id.start_button).setEnabled(true);
-                marker = googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title("Destination"));
-            }
-        });
+        map.setOnMapLongClickListener(latLng -> handleLocationPicked(latLng));
+    }
+
+    private void handleLocationPicked(LatLng latLng){
+        if(!locationPickingEnabled) return;
+        resetParams();
+        findViewById(R.id.start_button).setEnabled(true);
+        marker = this.map.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Destination"));
     }
 
     private void resetParams(){
@@ -182,47 +193,51 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.0f));
     }
 
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        Log.i(TAG, "lat: " + location.getLatitude() + ", lon: " + location.getLongitude());
-        if(!zoomOnce){
-            handleNewLocation(location);
-            zoomOnce = true;
-        }
-        if(marker == null){
-            return;
-        }
-        double latSrc = location.getLatitude();
-        double lonSrc = location.getLongitude();
-        double latDst = marker.getPosition().latitude;
-        double lonDst = marker.getPosition().longitude;
-        distance = calcDistance(latSrc, lonSrc, latDst, lonDst);
-        if(distance < prevDistance - 5){
+    private void reactToNewDistance(double distance){
+        if(distance < prevDistance - DISTANCE_TRIGGER){
             Log.e(TAG, "You got closer to destination");
             playSound(CORRECT, 1, 1);
-//            playSound(CORRECT, 1, 1);
+            prevDistance = distance;
         }
-        else if(distance - 5 > prevDistance){
+        else if(distance - DISTANCE_TRIGGER > prevDistance){
             Log.e(TAG, "You got farther from destination");
             playSound(WRONG, 1, 1);
-//            playSound(WRONG, 1, 1);
+            prevDistance = distance;
         }
         if(!reached && distance < 20){
             Log.e(TAG, "You reached destination");
             playSound(DESTINATION, 1, 1);
             reached = true;
         }
-        prevDistance = distance;
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        Log.i(TAG, "lat: " + location.getLatitude() + ", lon: " + location.getLongitude());
+        if(!reactToChanges) return;
+        if(marker == null) return;
+        double latSrc = location.getLatitude();
+        double lonSrc = location.getLongitude();
+        double latDst = marker.getPosition().latitude;
+        double lonDst = marker.getPosition().longitude;
+        distance = calcDistance(latSrc, lonSrc, latDst, lonDst);
+        reactToNewDistance(distance);
     }
 
     public void handleStart(View target){
         Button button = (Button) target;
-        if(button.getText().equals("Start")){
+        if(!started){
+            locationPickingEnabled = false;
+            reactToChanges = true;
+            started = true;
             button.setText("End");
             handleConnect();
             Log.e(TAG, "Routing Started");
         }
-        else if(button.getText().equals("End")){
+        else {
+            locationPickingEnabled = true;
+            reactToChanges = false;
+            started = false;
             button.setText("Start");
             resetParams();
             button.setEnabled(false);
