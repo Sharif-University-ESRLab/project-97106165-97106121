@@ -55,7 +55,7 @@ void loop() {
    } 
   else{
       if (distance1 < 50) {
-        MyBlue.write("L");
+        MyBlue.println("L");
         digitalWrite(LED_BUILTIN, HIGH);
       }
       Serial.print(duration1);
@@ -80,7 +80,7 @@ void loop() {
    } 
   else{
       if (distance2 < 50) {
-        MyBlue.write("R");
+        MyBlue.println("R");
         digitalWrite(LED_BUILTIN, HIGH);
       }
       Serial.print(duration2);
@@ -104,7 +104,7 @@ void loop() {
    } 
   else{
       if (distance1 < 50) {
-        MyBlue.write("C");
+        MyBlue.println("C");
         digitalWrite(LED_BUILTIN, HIGH);
       }
       Serial.print(duration3);
@@ -128,7 +128,7 @@ void loop() {
    } 
   else{
       if (distance1 < 58) {
-        MyBlue.write("C");
+        MyBlue.println("C");
         digitalWrite(LED_BUILTIN, HIGH);
       }
       Serial.print(duration4);
